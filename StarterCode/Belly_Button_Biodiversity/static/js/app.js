@@ -28,15 +28,15 @@ function buildMetadata(sample) {
 function buildCharts(sample) {
   var urlChart = `/samples/${sample}`;
 
-  d3.json(urlChart).then(function (data) {
-    console.log(data);
+  d3.json(urlChart).then(function (response) {
+    console.log(response);
 
 
     var desired_maximum_marker_size = 40;
-    var size = data.sample_values;
+    var size = response.sample_values;
     var trace4 = {
-      x: data.otu_ids,
-      y: data.sample_values,
+      x: response.otu_ids,
+      y: response.sample_values,
       text: ['A</br>size: 40</br>sixeref: 1.25', 'B</br>size: 60</br>sixeref: 1.25', 'C</br>size: 80</br>sixeref: 1.25', 'D</br>size: 100</br>sixeref: 1.25'],
       mode: 'markers',
       marker: {
@@ -53,12 +53,35 @@ function buildCharts(sample) {
       title: 'Belly Button Samples',
       showlegend: false,
       height: 600,
-      width: 600,
+      width: 1000,
       xaxis: {title: "Sample Id"},
       yaxis: {title: "Sample Volume"}
     };
 
     Plotly.newPlot('bubble', data, layout);
+    //console.log(data.sample_values);
+    pieValues = response.sample_values.slice(0,10);
+    pieLabels = response.otu_ids.slice(0,10);
+    console.log(pieValues);
+    var data = [{
+      values: pieValues,
+      labels: pieLabels,
+      type: 'pie'
+    }];
+    
+    var layout = {
+      height: 400,
+      width: 750,
+      title: "Ten Samples by Volume",
+      showlegend: true,
+      legend: {
+        title: "Id Number"
+      },
+      grid: {rows: 1, columns: 2}
+      
+    };
+    
+    Plotly.newPlot('pie', data, layout);
 
     // @TODO: Use `d3.json` to fetch the sample data for the plots
 
