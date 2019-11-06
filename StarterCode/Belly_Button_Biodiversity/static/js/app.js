@@ -1,29 +1,74 @@
+
+
+
 function buildMetadata(sample) {
+  var dataUrl = `/metadata/${sample}`;
+  d3.json(dataUrl).then(function (data) {
+    var data = [data];
+    //console.log(data);
+    var panel = d3.select("#sample-metadata");
+    panel.html("");
+    data.forEach((sample) => {
+      //panel.html("");
 
-  // @TODO: Complete the following function that builds the metadata panel
+      Object.entries(sample).forEach(([key, value]) => {
+        console.log(key, value);
+        panel.append("p").text(key).append("p").text(value);
+        //panel.append("p").text(`${key}`, `${value}`);
+      });
+    }
+    );
 
-  // Use `d3.json` to fetch the metadata for a sample
-    // Use d3 to select the panel with id of `#sample-metadata`
+  });
 
-    // Use `.html("") to clear any existing metadata
-
-    // Use `Object.entries` to add each key and value pair to the panel
-    // Hint: Inside the loop, you will need to use d3 to append new
-    // tags for each key-value in the metadata.
-
-    // BONUS: Build the Gauge Chart
-    // buildGauge(data.WFREQ);
+  // BONUS: Build the Gauge Chart
+  // buildGauge(data.WFREQ);
 }
 
 function buildCharts(sample) {
+  var urlChart = `/samples/${sample}`;
 
-  // @TODO: Use `d3.json` to fetch the sample data for the plots
+  d3.json(urlChart).then(function (data) {
+    console.log(data);
+
+
+    var desired_maximum_marker_size = 40;
+    var size = data.sample_values;
+    var trace4 = {
+      x: data.otu_ids,
+      y: data.sample_values,
+      text: ['A</br>size: 40</br>sixeref: 1.25', 'B</br>size: 60</br>sixeref: 1.25', 'C</br>size: 80</br>sixeref: 1.25', 'D</br>size: 100</br>sixeref: 1.25'],
+      mode: 'markers',
+      marker: {
+        size: size,
+        //set 'sizeref' to an 'ideal' size given by the formula sizeref = 2. * max(array_of_size_values) / (desired_maximum_marker_size ** 2)
+        sizeref: 2.0 * Math.max(...size) / (desired_maximum_marker_size ** 2),
+        sizemode: 'area'
+      }
+    };
+
+    var data = [trace4];
+
+    var layout = {
+      title: 'Belly Button Samples',
+      showlegend: false,
+      height: 600,
+      width: 600,
+      xaxis: {title: "Sample Id"},
+      yaxis: {title: "Sample Volume"}
+    };
+
+    Plotly.newPlot('bubble', data, layout);
+
+    // @TODO: Use `d3.json` to fetch the sample data for the plots
 
     // @TODO: Build a Bubble Chart using the sample data
 
     // @TODO: Build a Pie Chart
     // HINT: You will need to use slice() to grab the top 10 sample_values,
     // otu_ids, and labels (10 each).
+
+  });
 }
 
 function init() {
